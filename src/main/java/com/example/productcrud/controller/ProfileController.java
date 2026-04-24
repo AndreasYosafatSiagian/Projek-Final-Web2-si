@@ -8,33 +8,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Optional;
+
 @Controller
 public class ProfileController {
 
     private final UserRepository userRepository;
 
-    // Constructor Injection
     public ProfileController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    // ======================
-    // PROFILE PAGE
-    // ======================
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 
-        // kalau belum login → redirect ke login
+        // 🔒 jika belum login
         if (userDetails == null) {
             return "redirect:/login";
         }
 
-        // ambil user dari database berdasarkan username
-        return userRepository.findByUsername(userDetails.getUsername())
-                .map(user -> {
-                    model.addAttribute("user", user);
-                    return "profile"; // arah ke profile.html
-                })
-                .orElse("redirect:/login"); // kalau user tidak ditemukan
+        String username = userDetails.getUsername();
+
+        if (username == null) {
+            return "redirect:/login";
+        }
+
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            model.addAttribute("user", optionalUser.get());
+            return "profile";
+        } else {
+            return "redirect:/login";
+        }
     }
 }

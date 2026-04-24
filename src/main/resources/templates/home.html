@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- HEADER -->
+<head th:replace="fragments/layout :: header"></head>
+
+<body>
+
+<!-- NAVBAR (SAMA SEPERTI PRODUCT) -->
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="container">
+
+    <!-- TITLE -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Home</h2>
+    </div>
+
+    <!-- CARD UTAMA -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+
+            <h4>Selamat Datang 👋</h4>
+
+            <p>
+                Ini adalah aplikasi Product CRUD.
+                Kamu bisa mengelola produk, melihat statistik,
+                dan memonitor inventory dengan mudah.
+            </p>
+
+            <div class="mt-3">
+                <a href="/products" class="btn btn-primary">Lihat Produk</a>
+                <a href="/dashboard" class="btn btn-success">Dashboard</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FITUR -->
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5>📦 Produk</h5>
+                    <p>Kelola semua produk kamu.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5>📊 Dashboard</h5>
+                    <p>Lihat statistik produk secara ringkas.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5>🔐 Aman</h5>
+                    <p>Data hanya milik user masing-masing.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer th:replace="fragments/layout :: footer"></footer>
+
+</body>
+</html>

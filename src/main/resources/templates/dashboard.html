@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- HEADER -->
+<head th:replace="fragments/layout :: header"></head>
+
+<body>
+
+<!-- NAVBAR (WAJIB) -->
+<nav th:replace="fragments/layout :: navbar"></nav>
+
+<div class="container">
+
+    <h2 class="mb-4">Dashboard</h2>
+
+    <!-- EMPTY STATE -->
+    <div th:if="${totalProduct == 0}" class="alert alert-info">
+        Kamu belum punya produk. Yuk tambahkan produk sekarang!
+    </div>
+
+    <!-- CARD GRID -->
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h6>Total Produk</h6>
+                    <h3 th:text="${totalProduct}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <h6>Total Inventory</h6>
+                    <h5 th:text="'Rp ' + ${#numbers.formatDecimal(totalValue, 0, 'COMMA', 0, 'POINT')}"></h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <h6>Produk Aktif</h6>
+                    <h3 th:text="${active}"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-secondary text-white shadow">
+                <div class="card-body">
+                    <h6>Tidak Aktif</h6>
+                    <h3 th:text="${inactive}"></h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- KATEGORI -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-dark text-white">
+            Produk per Kategori
+        </div>
+        <div class="card-body">
+
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between"
+                    th:each="c : ${categories}">
+                    <span th:text="${c.key}"></span>
+                    <span class="badge bg-primary" th:text="${c.value}"></span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <!-- LOW STOCK -->
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            Low Stock (Stock < 5)
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+                <tr>
+                    <th>Nama</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="p : ${lowStock}">
+                    <td th:text="${p.name}"></td>
+                    <td th:text="${p.stock}"></td>
+                </tr>
+
+                <tr th:if="${lowStock.isEmpty()}">
+                    <td colspan="2" class="text-center">
+                        Tidak ada produk low stock
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer th:replace="fragments/layout :: footer"></footer>
+
+</body>
+</html>

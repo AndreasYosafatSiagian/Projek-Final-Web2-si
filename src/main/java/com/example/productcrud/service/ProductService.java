@@ -1,5 +1,6 @@
 package com.example.productcrud.service;
 
+import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
@@ -54,17 +55,17 @@ public class ProductService {
                 .stream()
                 .sorted(Comparator.comparing(Product::getId).reversed())
                 .limit(5)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // ======================
     // DASHBOARD ADVANCED
     // ======================
 
-    public double totalInventoryValue(User owner) {
+    public long totalInventoryValue(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
-                .mapToDouble(p -> p.getPrice() * p.getStock())
+                .mapToLong(p -> p.getPrice() * p.getStock())
                 .sum();
     }
 
@@ -82,19 +83,28 @@ public class ProductService {
                 .count();
     }
 
-    public List<Product> lowStock(User owner) {
+    // 🔥 METHOD UNTUK LOW STOCK (Balikkan long, bukan List)
+    public long lowStock(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
-                .filter(p -> p.getStock() < 5)
-                .toList();
+                .filter(p -> p.getStock() < 10)
+                .count();
     }
 
-    // 🔥 FIX PALING PENTING (ANTI ERROR)
-    public Map<String, Long> countByCategory(User owner) {
+    // 🔥 METHOD UNTUK DAPATKAN LIST PRODUK LOW STOCK (opsional)
+    public List<Product> getLowStockProducts(User owner) {
+        return productRepository.findByOwner(owner)
+                .stream()
+                .filter(p -> p.getStock() < 10)
+                .collect(Collectors.toList());
+    }
+
+    // 🔥 FIX PALING PENTING (ANTI ERROR) - Return Map<Category, Long>
+    public Map<Category, Long> countByCategory(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
                 .collect(Collectors.groupingBy(
-                        p -> String.valueOf(p.getCategory()), // ✅ FIX
+                        Product::getCategory,
                         Collectors.counting()
                 ));
     }

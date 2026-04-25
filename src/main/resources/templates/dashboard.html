@@ -15,7 +15,7 @@
 
     <!-- EMPTY STATE -->
     <div th:if="${totalProduct == 0}" class="alert alert-info">
-        Belum ada produk. Yuk mulai tambah produk pertama kamu 🚀
+        Belum ada produk. Yuk mulai tambah produk pertama kamu
         <a href="/products/new" class="btn btn-primary btn-sm ms-2">Tambah Produk</a>
     </div>
 
@@ -32,14 +32,12 @@
             </div>
         </div>
 
-        <!-- TOTAL VALUE -->
+        <!-- TOTAL VALUE (TANPA formatDecimal rumit) -->
         <div class="col-md-3">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h6>Total Inventory</h6>
-                    <h4 th:text="${'Rp ' + #numbers.formatDecimal(totalValue, 0, 'POINT', 0, 'COMMA')}">
-                        Rp 0
-                    </h4>
+                    <h4 th:text="'Rp ' + ${totalValue}">Rp 0</h4>
                 </div>
             </div>
         </div>
@@ -71,68 +69,66 @@
         <div class="card-header bg-dark text-white">
             Produk per Kategori
         </div>
-
         <div class="card-body">
-
             <div class="row">
-
-                <div class="col-md-6"
-                     th:each="c : ${categories}">
-
+                <div class="col-md-6" th:each="entry : ${categories}">
                     <div class="d-flex justify-content-between border-bottom py-2">
-
-                        <span th:text="${c.key}">Kategori</span>
-
-                        <span class="badge bg-primary"
-                              th:text="${c.value}">0</span>
-
+                        <span th:text="${entry.key.displayName}">Kategori</span>
+                        <span class="badge bg-primary" th:text="${entry.value}">0</span>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </div>
 
-    <!-- LOW STOCK -->
+    <!-- LOW STOCK ALERT -->
     <div class="card mt-4 shadow-sm">
-
-        <div class="card-header bg-danger text-white">
-            Low Stock (stok < 5)
+        <div class="card-header bg-warning text-dark">
+             Low Stock Alert (Stok &lt; 10)
         </div>
-
         <div class="card-body">
+            <div class="alert alert-warning" th:if="${lowStock > 0}">
+                Ada <strong th:text="${lowStock}"></strong> produk dengan stok di bawah 10!
+                <a href="/products" class="btn btn-warning btn-sm ms-2">Lihat Produk</a>
+            </div>
+            <div class="alert alert-success" th:unless="${lowStock > 0}">
+                 Bagus! Tidak ada produk dengan stok menipis.
+            </div>
+        </div>
+    </div>
 
-            <table class="table table-sm">
-
+    <!-- 5 PRODUK TERBARU -->
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-dark text-white">
+             5 Produk Terbaru
+        </div>
+        <div class="card-body">
+            <table class="table table-sm table-striped">
                 <thead>
                 <tr>
                     <th>Nama</th>
-                    <th>Stock</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
-
                 <tbody>
-
-                <tr th:each="p : ${lowStock}">
-                    <td th:text="${p.name}"></td>
+                <tr th:each="product : ${latestProducts}">
+                    <td th:text="${product.name}">-</td>
+                    <td th:text="${product.category.displayName}">-</td>
+                    <td th:text="'Rp ' + ${product.price}">-</td>
+                    <td th:text="${product.stock}">-</td>
                     <td>
-                        <span class="badge bg-warning text-dark"
-                              th:text="${p.stock}"></span>
+                        <span th:if="${product.active}" class="badge bg-success">Aktif</span>
+                        <span th:unless="${product.active}" class="badge bg-danger">Tidak Aktif</span>
                     </td>
                 </tr>
-
-                <tr th:if="${lowStock == null or lowStock.isEmpty()}">
-                    <td colspan="2" class="text-center text-muted">
-                        Tidak ada produk low stock 🎉
-                    </td>
+                <tr th:if="${#lists.isEmpty(latestProducts)}">
+                    <td colspan="5" class="text-center text-muted">Belum ada produk</td>
                 </tr>
-
                 </tbody>
-
             </table>
-
         </div>
     </div>
 

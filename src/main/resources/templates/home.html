@@ -16,21 +16,26 @@
         <div class="container-fluid py-3">
 
             <h1 class="display-6 fw-bold">
-                Welcome to Product CRUD System
+                Selamat Datang di Product CRUD System
             </h1>
 
             <p class="col-md-8 fs-5">
-                Manage your products efficiently with secure login,
-                category management, and inventory tracking.
+                Kelola produk Anda dengan aman dan efisien.
+                Sistem ini mendukung manajemen kategori, tracking stok,
+                dan statistik lengkap untuk setiap pengguna.
             </p>
 
             <div class="mt-3">
                 <a href="/products" class="btn btn-primary btn-lg me-2">
-                    📦 View Products
+                     Lihat Produk
                 </a>
 
                 <a href="/dashboard" class="btn btn-success btn-lg">
-                    📊 Dashboard
+                     Dashboard
+                </a>
+
+                <a href="/products/new" class="btn btn-outline-primary btn-lg">
+                     Tambah Produk Baru
                 </a>
             </div>
 
@@ -38,35 +43,61 @@
     </div>
 
     <!-- FEATURE CARDS -->
-    <div class="row g-3">
+    <div class="row g-4">
 
         <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>📦 Product Management</h5>
-                    <p>Create, edit, delete products easily with full CRUD system.</p>
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center">
+                    <div class="display-1"></div>
+                    <h5 class="card-title mt-3">Product Management</h5>
+                    <p class="card-text text-muted">
+                        Buat, edit, dan hapus produk dengan mudah. Sistem CRUD lengkap dengan validasi data.
+                    </p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>📊 Dashboard Analytics</h5>
-                    <p>Track total products, stock, and category statistics.</p>
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center">
+                    <div class="display-1"></div>
+                    <h5 class="card-title mt-3">Dashboard Analytics</h5>
+                    <p class="card-text text-muted">
+                        Pantau total produk, stok, dan statistik per kategori secara real-time.
+                    </p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>🔐 Secure Access</h5>
-                    <p>Each user only sees their own products (ownership system).</p>
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center">
+                    <div class="display-1"></div>
+                    <h5 class="card-title mt-3">Secure Access</h5>
+                    <p class="card-text text-muted">
+                        Setiap pengguna hanya melihat produk mereka sendiri (sistem ownership).
+                    </p>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- STATISTIK CEPAT (Hanya tampil jika user login dan data ada) -->
+    <div class="row mt-4" th:if="${totalProduct != null}">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <strong> Statistik Anda:</strong>
+                Total <strong th:text="${totalProduct}">0</strong> produk,
+                dengan <strong th:text="${active}">0</strong> produk aktif
+                <span th:if="${lowStock != null and lowStock > 0}">
+                    dan <strong class="text-warning" th:text="${lowStock}">0</strong> produk stok menipis.
+                </span>
+                <span th:unless="${lowStock != null and lowStock > 0}">
+                    dan <strong class="text-success">✓</strong> semua stok aman.
+                </span>
+            </div>
+        </div>
     </div>
 
 </div>

@@ -22,20 +22,21 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Authentication auth, Model model) {
 
-        if (auth == null) {
+        // ❗ 1. wajib cek login
+        if (auth == null || !auth.isAuthenticated()) {
             return "redirect:/login";
         }
 
-        String username = auth.getName();
+        // ❗ 2. ambil user dengan aman (jangan pakai null)
+        User user = userRepository.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        // 🔥 navbar username (aman)
+        model.addAttribute("username", auth.getName());
 
-        // BASIC
+        // 📊 statistik dashboard
         model.addAttribute("totalProduct", productService.countByOwner(user));
         model.addAttribute("latestProducts", productService.findTop5ByOwner(user));
-
-        // ADVANCED (RUBRIK DOSEN)
         model.addAttribute("totalValue", productService.totalInventoryValue(user));
         model.addAttribute("active", productService.countActive(user));
         model.addAttribute("inactive", productService.countInactive(user));

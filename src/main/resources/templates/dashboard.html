@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!-- HEADER -->
-<head th:replace="fragments/layout :: header"></head>
+<head th:replace="~{fragments/layout :: header}">
+    <title>Dashboard</title>
+</head>
 
 <body>
 
-<!-- NAVBAR (WAJIB) -->
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
+<div class="container mt-4">
 
     <h2 class="mb-4">Dashboard</h2>
 
     <!-- EMPTY STATE -->
     <div th:if="${totalProduct == 0}" class="alert alert-info">
-        Kamu belum punya produk. Yuk tambahkan produk sekarang!
+        Belum ada produk. Yuk mulai tambah produk pertama kamu 🚀
+        <a href="/products/new" class="btn btn-primary btn-sm ms-2">Tambah Produk</a>
     </div>
 
-    <!-- CARD GRID -->
-    <div class="row mb-4">
+    <!-- STATS CARDS -->
+    <div class="row g-3">
 
+        <!-- TOTAL PRODUCT -->
         <div class="col-md-3">
-            <div class="card bg-primary text-white shadow">
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h6>Total Produk</h6>
                     <h3 th:text="${totalProduct}">0</h3>
@@ -30,64 +32,81 @@
             </div>
         </div>
 
+        <!-- TOTAL VALUE -->
         <div class="col-md-3">
-            <div class="card bg-success text-white shadow">
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h6>Total Inventory</h6>
-                    <h5 th:text="'Rp ' + ${#numbers.formatDecimal(totalValue, 0, 'COMMA', 0, 'POINT')}"></h5>
+                    <h4 th:text="${'Rp ' + #numbers.formatDecimal(totalValue, 0, 'POINT', 0, 'COMMA')}">
+                        Rp 0
+                    </h4>
                 </div>
             </div>
         </div>
 
+        <!-- ACTIVE -->
         <div class="col-md-3">
-            <div class="card bg-info text-white shadow">
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h6>Produk Aktif</h6>
-                    <h3 th:text="${active}"></h3>
+                    <h3 class="text-success" th:text="${active}">0</h3>
                 </div>
             </div>
         </div>
 
+        <!-- INACTIVE -->
         <div class="col-md-3">
-            <div class="card bg-secondary text-white shadow">
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h6>Tidak Aktif</h6>
-                    <h3 th:text="${inactive}"></h3>
+                    <h6>Produk Tidak Aktif</h6>
+                    <h3 class="text-danger" th:text="${inactive}">0</h3>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- KATEGORI -->
-    <div class="card mb-4 shadow">
+    <!-- CATEGORY SECTION -->
+    <div class="card mt-4 shadow-sm">
         <div class="card-header bg-dark text-white">
             Produk per Kategori
         </div>
+
         <div class="card-body">
 
-            <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between"
-                    th:each="c : ${categories}">
-                    <span th:text="${c.key}"></span>
-                    <span class="badge bg-primary" th:text="${c.value}"></span>
-                </li>
-            </ul>
+            <div class="row">
+
+                <div class="col-md-6"
+                     th:each="c : ${categories}">
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+
+                        <span th:text="${c.key}">Kategori</span>
+
+                        <span class="badge bg-primary"
+                              th:text="${c.value}">0</span>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
     </div>
 
     <!-- LOW STOCK -->
-    <div class="card shadow">
+    <div class="card mt-4 shadow-sm">
+
         <div class="card-header bg-danger text-white">
-            Low Stock (Stock < 5)
+            Low Stock (stok < 5)
         </div>
 
         <div class="card-body">
 
-            <table class="table table-bordered table-hover">
+            <table class="table table-sm">
 
-                <thead class="table-dark">
+                <thead>
                 <tr>
                     <th>Nama</th>
                     <th>Stock</th>
@@ -95,16 +114,21 @@
                 </thead>
 
                 <tbody>
+
                 <tr th:each="p : ${lowStock}">
                     <td th:text="${p.name}"></td>
-                    <td th:text="${p.stock}"></td>
-                </tr>
-
-                <tr th:if="${lowStock.isEmpty()}">
-                    <td colspan="2" class="text-center">
-                        Tidak ada produk low stock
+                    <td>
+                        <span class="badge bg-warning text-dark"
+                              th:text="${p.stock}"></span>
                     </td>
                 </tr>
+
+                <tr th:if="${lowStock == null or lowStock.isEmpty()}">
+                    <td colspan="2" class="text-center text-muted">
+                        Tidak ada produk low stock 🎉
+                    </td>
+                </tr>
+
                 </tbody>
 
             </table>
@@ -114,8 +138,7 @@
 
 </div>
 
-<!-- FOOTER -->
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

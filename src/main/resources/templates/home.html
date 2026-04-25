@@ -1,67 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!-- HEADER -->
-<head th:replace="fragments/layout :: header"></head>
+<head th:replace="~{fragments/layout :: header}">
+    <title>Home - Product CRUD</title>
+</head>
 
 <body>
 
-<!-- NAVBAR (SAMA SEPERTI PRODUCT) -->
-<nav th:replace="fragments/layout :: navbar"></nav>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
+<div class="container mt-4">
 
-    <!-- TITLE -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Home</h2>
-    </div>
+    <!-- HERO SECTION -->
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+        <div class="container-fluid py-3">
 
-    <!-- CARD UTAMA -->
-    <div class="card shadow mb-4">
-        <div class="card-body">
+            <h1 class="display-6 fw-bold">
+                Welcome to Product CRUD System
+            </h1>
 
-            <h4>Selamat Datang 👋</h4>
-
-            <p>
-                Ini adalah aplikasi Product CRUD.
-                Kamu bisa mengelola produk, melihat statistik,
-                dan memonitor inventory dengan mudah.
+            <p class="col-md-8 fs-5">
+                Manage your products efficiently with secure login,
+                category management, and inventory tracking.
             </p>
 
             <div class="mt-3">
-                <a href="/products" class="btn btn-primary">Lihat Produk</a>
-                <a href="/dashboard" class="btn btn-success">Dashboard</a>
+                <a href="/products" class="btn btn-primary btn-lg me-2">
+                    📦 View Products
+                </a>
+
+                <a href="/dashboard" class="btn btn-success btn-lg">
+                    📊 Dashboard
+                </a>
             </div>
 
         </div>
     </div>
 
-    <!-- FITUR -->
-    <div class="row">
+    <!-- FEATURE CARDS -->
+    <div class="row g-3">
 
         <div class="col-md-4">
-            <div class="card shadow mb-4">
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h5>📦 Produk</h5>
-                    <p>Kelola semua produk kamu.</p>
+                    <h5>📦 Product Management</h5>
+                    <p>Create, edit, delete products easily with full CRUD system.</p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow mb-4">
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h5>📊 Dashboard</h5>
-                    <p>Lihat statistik produk secara ringkas.</p>
+                    <h5>📊 Dashboard Analytics</h5>
+                    <p>Track total products, stock, and category statistics.</p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow mb-4">
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h5>🔐 Aman</h5>
-                    <p>Data hanya milik user masing-masing.</p>
+                    <h5>🔐 Secure Access</h5>
+                    <p>Each user only sees their own products (ownership system).</p>
                 </div>
             </div>
         </div>
@@ -70,8 +71,7 @@
 
 </div>
 
-<!-- FOOTER -->
-<footer th:replace="fragments/layout :: footer"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

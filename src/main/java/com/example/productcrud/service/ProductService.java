@@ -61,7 +61,6 @@ public class ProductService {
     // DASHBOARD ADVANCED
     // ======================
 
-    // Total nilai inventory
     public double totalInventoryValue(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
@@ -69,7 +68,6 @@ public class ProductService {
                 .sum();
     }
 
-    // Produk aktif
     public long countActive(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
@@ -77,7 +75,6 @@ public class ProductService {
                 .count();
     }
 
-    // Produk tidak aktif
     public long countInactive(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
@@ -85,7 +82,6 @@ public class ProductService {
                 .count();
     }
 
-    // Low stock (<5)
     public List<Product> lowStock(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
@@ -93,12 +89,12 @@ public class ProductService {
                 .toList();
     }
 
-    // Produk per kategori (FIX ENUM)
+    // 🔥 FIX PALING PENTING (ANTI ERROR)
     public Map<String, Long> countByCategory(User owner) {
         return productRepository.findByOwner(owner)
                 .stream()
                 .collect(Collectors.groupingBy(
-                        p -> p.getCategory().getDisplayName(), // ✅ FIX DI SINI
+                        p -> String.valueOf(p.getCategory()), // ✅ FIX
                         Collectors.counting()
                 ));
     }

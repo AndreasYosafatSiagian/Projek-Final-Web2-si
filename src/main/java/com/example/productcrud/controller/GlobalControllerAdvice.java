@@ -1,8 +1,8 @@
 package com.example.productcrud.controller;
 
-import ch.qos.logback.core.model.Model;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -10,9 +10,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalControllerAdvice {
 
     @ModelAttribute
-    public void addUserToModel(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        if (userDetails != null) {
-            model.addText("username");
+    public void addUserToModel(Model model) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null
+                && auth.isAuthenticated()
+                && !"anonymousUser".equals(auth.getPrincipal())) {
+
+            model.addAttribute("username", auth.getName());
+        } else {
+            model.addAttribute("username", "Guest");
         }
     }
 }

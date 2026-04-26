@@ -16,12 +16,18 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // 🔥 TAMBAHAN (UNTUK USER PROFILE)
-    private String fullName;
-    private String phoneNumber;
-    private String address;
-    private String bio;
-    private String profileImageUrl;
+    // ========== FIELD TAMBAHAN UNTUK PROFILE ==========
+
+    @Column(length = 100)
+    private String name;
+
+    @Column(length = 100, unique = true)
+    private String email;
+
+    @Column(length = 20)
+    private String phone;
+
+    // ========== CONSTRUCTORS ==========
 
     public User() {
     }
@@ -31,7 +37,14 @@ public class User {
         this.password = password;
     }
 
-    // ================= GETTER SETTER LAMA =================
+    public User(String username, String password, String name, String email) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+    }
+
+    // ========== GETTERS AND SETTERS ==========
 
     public Long getId() {
         return id;
@@ -57,48 +70,27 @@ public class User {
         this.password = password;
     }
 
-    // ================= GETTER SETTER TAMBAHAN =================
-
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public String getPhone() {
+        return phone;
     }
 
     public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

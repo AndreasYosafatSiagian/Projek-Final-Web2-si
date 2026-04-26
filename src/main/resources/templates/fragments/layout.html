@@ -12,32 +12,34 @@
         }
         .navbar-brand { font-weight: bold; }
         .container { margin-top: 20px; }
+        /* Memastikan kursor berubah jadi tangan saat diarahkan ke nama */
+        .dropdown-toggle { cursor: pointer; }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/products">Product CRUD</a>
+            <a class="navbar-brand" th:href="@{/products}">Product CRUD</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/products">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/products}">Products</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Halo, <span th:text="${#authentication.name}">User</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" th:href="@{/logout}">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -46,13 +48,13 @@
     </nav>
 </div>
 
-<!-- FOOTER -->
 <div th:fragment="footer">
-    <footer class="text-center py-3 bg-light mt-4">
+    <footer class="text-center py-3 bg-light mt-4 border-top">
         <p class="mb-0">© 2026 Product CRUD</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

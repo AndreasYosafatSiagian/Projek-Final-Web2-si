@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}">
+    <title>My Profile</title>
+</head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">My Profile</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- PESAN SUKSES -->
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${successMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- PESAN ERROR -->
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- DATA PROFILE -->
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 150px;">Username</th>
+                            <td th:text="${user.username}">-</td>
+                        </tr>
+                        <tr>
+                            <th>Full Name</th>
+                            <td th:text="${user.fullName != null ? user.fullName : '-'}">-</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td th:text="${user.email != null ? user.email : '-'}">-</td>
+                        </tr>
+                        <tr>
+                            <th>Phone Number</th>
+                            <td th:text="${user.phoneNumber != null ? user.phoneNumber : '-'}">-</td>
+                        </tr>
+                        <tr>
+                            <th>Address</th>
+                            <td th:text="${user.address != null ? user.address : '-'}">-</td>
+                        </tr>
+                        <tr>
+                            <th>Bio</th>
+                            <td th:text="${user.bio != null ? user.bio : '-'}">-</td>
+                        </tr>
+                    </table>
+
+                    <!-- STATISTIK -->
+                    <hr class="my-4">
+                    <div class="alert alert-info">
+                        <strong>📊 Statistik Akun</strong><br>
+                        Total Produk: <strong th:text="${totalProducts != null ? totalProducts : 0}">0</strong><br>
+                        Produk Aktif: <strong th:text="${activeProducts != null ? activeProducts : 0}">0</strong><br>
+                        Total Nilai Inventory: <strong th:text="${totalStock != null ? totalStock : 0}">0</strong>
+                    </div>
+
+                    <!-- TOMBOL AKSI -->
+                    <div class="d-flex gap-2 mt-3">
+                        <a th:href="@{/user/profile/edit}" class="btn btn-warning">✏️ Edit Profile</a>
+                        <a th:href="@{/products}" class="btn btn-secondary">← Kembali ke Produk</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

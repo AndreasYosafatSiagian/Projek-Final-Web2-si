@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}">
+    <title>Edit Profile</title>
+</head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Profile</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- PESAN SUKSES -->
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${successMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- PESAN ERROR -->
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- FORM EDIT PROFILE -->
+                    <form th:action="@{/user/profile/edit}" method="post">
+
+                        <!-- USERNAME (READ ONLY) -->
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control bg-light"
+                                   th:value="${user.username}" readonly>
+                            <small class="text-muted">Username tidak dapat diubah</small>
+                        </div>
+
+                        <!-- FULL NAME -->
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control"
+                                   name="fullName"
+                                   th:value="${user.fullName}"
+                                   placeholder="Masukkan nama lengkap">
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control"
+                                   name="email"
+                                   th:value="${user.email}"
+                                   placeholder="Masukkan email">
+                        </div>
+
+                        <!-- PHONE NUMBER -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control"
+                                   name="phoneNumber"
+                                   th:value="${user.phoneNumber}"
+                                   placeholder="Masukkan nomor telepon">
+                        </div>
+
+                        <!-- ADDRESS -->
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control"
+                                   name="address"
+                                   th:value="${user.address}"
+                                   placeholder="Masukkan alamat">
+                        </div>
+
+                        <!-- BIO -->
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control"
+                                      name="bio"
+                                      rows="3"
+                                      placeholder="Ceritakan sedikit tentang diri Anda...">[[${user.bio}]]</textarea>
+                        </div>
+
+                        <!-- BUTTONS -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                            <a th:href="@{/user/profile}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                    </form>
+
+                    <!-- FORM GANTI PASSWORD -->
+                    <hr class="my-4">
+                    <h5 class="mb-3">🔐 Change Password</h5>
+
+                    <form th:action="@{/user/profile/change-password}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control"
+                                   name="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control"
+                                   name="newPassword" required>
+                            <small class="text-muted">Minimal 6 karakter</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control"
+                                   name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                            🔄 Change Password
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

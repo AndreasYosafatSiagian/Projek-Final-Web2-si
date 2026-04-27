@@ -17,8 +17,9 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
+    // ── Diubah: dari @Enumerated enum menjadi @ManyToOne relation ──
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     private long price;
@@ -37,6 +38,8 @@ public class Product {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    // ── Constructors ──────────────────────────────────────────────
+
     public Product() {
     }
 
@@ -51,6 +54,8 @@ public class Product {
         this.active = active;
         this.createdAt = createdAt;
     }
+
+    // ── Getters & Setters ─────────────────────────────────────────
 
     public Long getId() {
         return id;

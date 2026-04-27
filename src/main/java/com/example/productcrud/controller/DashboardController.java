@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class DashboardController {
 
@@ -38,8 +41,16 @@ public class DashboardController {
         model.addAttribute("totalValue", productService.totalInventoryValue(user));
         model.addAttribute("active", productService.countActive(user));
         model.addAttribute("inactive", productService.countInactive(user));
-        model.addAttribute("lowStock", productService.lowStock(user));  // ← method ini sudah ada
-        model.addAttribute("categories", productService.countByCategory(user));
+        model.addAttribute("lowStock", productService.lowStock(user));
+
+        // AMAN: gunakan try-catch untuk categories
+        try {
+            Map<?, ?> categories = productService.countByCategory(user);
+            model.addAttribute("categories", categories != null ? categories : new HashMap<>());
+        } catch (Exception e) {
+            System.err.println("Error loading categories: " + e.getMessage());
+            model.addAttribute("categories", new HashMap<>());
+        }
 
         return "dashboard";
     }

@@ -20,11 +20,16 @@
                             <input type="text" class="form-control" th:field="*{name}" required>
                         </div>
 
+                        <!-- PERBAIKAN: Menggunakan name="categoryId" BUKAN th:field -->
                         <div class="mb-3">
                             <label class="form-label">Kategori</label>
-                            <select class="form-select" th:field="*{category}">
+                            <select class="form-select" name="categoryId">
                                 <option value="">-- Pilih Kategori --</option>
-                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}"></option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.name}"
+                                        th:selected="${product.category != null and product.category.id == cat.id}">
+                                </option>
                             </select>
                         </div>
 

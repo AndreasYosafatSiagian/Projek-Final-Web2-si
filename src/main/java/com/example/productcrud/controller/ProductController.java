@@ -4,7 +4,9 @@ import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
+import com.example.productcrud.service.CategoryService;
 import com.example.productcrud.service.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -13,16 +15,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class ProductController {
 
     private final ProductService productService;
     private final UserRepository userRepository;
+    private final CategoryService categoryService;
 
-    public ProductController(ProductService productService, UserRepository userRepository) {
+    public ProductController(ProductService productService,
+                             UserRepository userRepository,
+                             CategoryService categoryService) {
         this.productService = productService;
         this.userRepository = userRepository;
+        this.categoryService = categoryService;
     }
 
     // ======================
@@ -34,16 +41,45 @@ public class ProductController {
     }
 
     // ======================
-    // LIST PRODUCT
+    // LIST PRODUCT WITH PAGINATION, SEARCH & FILTER (NAME, ACTIVE, CATEGORY)
     // ======================
     @GetMapping("/products")
     public String listProducts(@AuthenticationPrincipal UserDetails userDetails,
+                               @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "") String search,
+                               @RequestParam(required = false) Boolean active,
+                               @RequestParam(required = false) Long categoryId,
                                Model model) {
 
         User currentUser = getCurrentUser(userDetails);
 
-        model.addAttribute("products",
-                productService.findAllByOwner(currentUser));
+        // Ukuran halaman: 10 produk per halaman
+        int pageSize = 10;
+
+        // Ambil data dengan pagination (termasuk filter category)
+        Page<Product> productPage = productService.findPaginated(currentUser, page, pageSize, search, active, categoryId);
+
+        // Hitung nomor halaman awal dan akhir untuk navigasi
+        int currentPage = productPage.getNumber() + 1;
+        int totalPages = productPage.getTotalPages();
+        int startPage = Math.max(1, currentPage - 2);
+        int endPage = Math.min(totalPages, currentPage + 2);
+
+        // Ambil semua categories untuk dropdown filter
+        List<Category> categories = categoryService.getAllByUser(currentUser.getId());
+
+        // Kirim data ke view
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("search", search);
+        model.addAttribute("activeFilter", active);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("categories", categories); // Untuk dropdown filter kategori
 
         return "product/list";
     }
@@ -65,10 +101,7 @@ public class ProductController {
                     return "product/detail";
                 })
                 .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute(
-                            "errorMessage",
-                            "Produk tidak ditemukan"
-                    );
+                    redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan");
                     return "redirect:/products";
                 });
     }
@@ -77,13 +110,16 @@ public class ProductController {
     // CREATE FORM
     // ======================
     @GetMapping("/products/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails,
+                                 Model model) {
+
+        User currentUser = getCurrentUser(userDetails);
 
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
 
         model.addAttribute("product", product);
-        model.addAttribute("categories", Category.values());
+        model.addAttribute("categories", categoryService.getAllByUser(currentUser.getId()));
 
         return "product/form";
     }
@@ -93,6 +129,7 @@ public class ProductController {
     // ======================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam(value = "categoryId", required = false) Long categoryId,
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
 
@@ -100,27 +137,26 @@ public class ProductController {
 
         // validasi ownership saat edit
         if (product.getId() != null) {
-            boolean exists = productService
-                    .findByIdAndOwner(product.getId(), currentUser)
-                    .isPresent();
-
+            boolean exists = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();
             if (!exists) {
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Produk tidak ditemukan"
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan");
                 return "redirect:/products";
             }
+        }
+
+        // Set category dari DB berdasarkan categoryId yang dipilih user
+        if (categoryId != null) {
+            Category category = categoryService.getByIdAndUser(categoryId, currentUser.getId())
+                    .orElse(null);
+            product.setCategory(category);
+        } else {
+            product.setCategory(null);
         }
 
         product.setOwner(currentUser);
         productService.save(product);
 
-        redirectAttributes.addFlashAttribute(
-                "successMessage",
-                "Produk berhasil disimpan!"
-        );
-
+        redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");
         return "redirect:/products";
     }
 
@@ -138,14 +174,11 @@ public class ProductController {
         return productService.findByIdAndOwner(id, currentUser)
                 .map(product -> {
                     model.addAttribute("product", product);
-                    model.addAttribute("categories", Category.values());
+                    model.addAttribute("categories", categoryService.getAllByUser(currentUser.getId()));
                     return "product/form";
                 })
                 .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute(
-                            "errorMessage",
-                            "Produk tidak ditemukan"
-                    );
+                    redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan");
                     return "redirect:/products";
                 });
     }
@@ -160,22 +193,13 @@ public class ProductController {
 
         User currentUser = getCurrentUser(userDetails);
 
-        boolean exists = productService
-                .findByIdAndOwner(id, currentUser)
-                .isPresent();
+        boolean exists = productService.findByIdAndOwner(id, currentUser).isPresent();
 
         if (exists) {
             productService.deleteByIdAndOwner(id, currentUser);
-
-            redirectAttributes.addFlashAttribute(
-                    "successMessage",
-                    "Produk berhasil dihapus!"
-            );
+            redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil dihapus!");
         } else {
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Produk tidak ditemukan"
-            );
+            redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan");
         }
 
         return "redirect:/products";

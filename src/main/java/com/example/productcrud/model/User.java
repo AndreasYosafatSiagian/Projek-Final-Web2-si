@@ -1,6 +1,7 @@
 package com.example.productcrud.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -18,30 +19,42 @@ public class User {
 
     // ========== FIELD TAMBAHAN UNTUK PROFILE ==========
 
-    @Column(length = 100)
-    private String name;
+    @Column(name = "full_name", length = 100)
+    private String fullName;
 
     @Column(length = 100, unique = true)
     private String email;
 
-    @Column(length = 20)
-    private String phone;
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
+    @Column(length = 500)
+    private String address;
+
+    @Column(length = 1000)
+    private String bio;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     // ========== CONSTRUCTORS ==========
 
     public User() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public User(String username, String password, String name, String email) {
+    public User(String username, String password, String fullName, String email) {
         this.username = username;
         this.password = password;
-        this.name = name;
+        this.fullName = fullName;
         this.email = email;
+        this.createdAt = LocalDateTime.now();
     }
 
     // ========== GETTERS AND SETTERS ==========
@@ -70,12 +83,12 @@ public class User {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -86,11 +99,58 @@ public class User {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // ========== METHOD COMPATIBILITY UNTUK KODE LAMA ==========
+    // Method ini untuk kompatibilitas jika masih ada kode yang menggunakan getName()
+
+    @Deprecated
+    public String getName() {
+        return fullName;
+    }
+
+    @Deprecated
+    public void setName(String name) {
+        this.fullName = name;
+    }
+
+    @Deprecated
+    public String getPhone() {
+        return phoneNumber;
+    }
+
+    @Deprecated
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phoneNumber = phone;
     }
 }

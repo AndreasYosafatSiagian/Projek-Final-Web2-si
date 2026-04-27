@@ -19,11 +19,22 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Kategori</th>
-                            <td th:text="${product.category}">-</td>  <!-- ← Ganti jadi langsung category -->
+                            <!-- ✅ UPDATE: menampilkan nama kategori dari entity Category -->
+                            <td>
+                                <span th:if="${product.category != null}"
+                                      th:text="${product.category.name}"
+                                      class="badge bg-info">
+                                    Nama Kategori
+                                </span>
+                                <span th:unless="${product.category != null}"
+                                      class="badge bg-secondary">
+                                    Tidak Berkategori
+                                </span>
+                            </td>
                         </tr>
                         <tr>
                             <th class="text-muted">Harga</th>
-                            <td th:text="${'Rp ' + product.price}">Rp 0</td>
+                            <td th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'COMMA')}">Rp 0</td>
                         </tr>
                         <tr>
                             <th class="text-muted">Stok</th>
@@ -39,6 +50,10 @@
                         <tr>
                             <th class="text-muted">Tanggal Dibuat</th>
                             <td th:text="${product.createdAt}">-</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Deskripsi</th>
+                            <td th:text="${product.description != null ? product.description : '-'}">-</td>
                         </tr>
                     </table>
                 </div>

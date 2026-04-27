@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <!-- TOTAL VALUE (TANPA formatDecimal rumit) -->
+        <!-- TOTAL VALUE -->
         <div class="col-md-3">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -64,27 +64,24 @@
 
     </div>
 
-    <!-- CATEGORY SECTION -->
+    <!-- CATEGORY SECTION - SEMENTARA DINONAKTIFKAN -->
+    <!--
     <div class="card mt-4 shadow-sm">
         <div class="card-header bg-dark text-white">
             Produk per Kategori
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6" th:each="entry : ${categories}">
-                    <div class="d-flex justify-content-between border-bottom py-2">
-                        <span th:text="${entry.key.displayName}">Kategori</span>
-                        <span class="badge bg-primary" th:text="${entry.value}">0</span>
-                    </div>
-                </div>
+            <div class="alert alert-info text-center mb-0">
+                Data kategori akan segera ditampilkan
             </div>
         </div>
     </div>
+    -->
 
     <!-- LOW STOCK ALERT -->
     <div class="card mt-4 shadow-sm">
         <div class="card-header bg-warning text-dark">
-             Low Stock Alert (Stok &lt; 10)
+            Low Stock Alert (Stok &lt; 10)
         </div>
         <div class="card-body">
             <div class="alert alert-warning" th:if="${lowStock > 0}">
@@ -92,7 +89,7 @@
                 <a href="/products" class="btn btn-warning btn-sm ms-2">Lihat Produk</a>
             </div>
             <div class="alert alert-success" th:unless="${lowStock > 0}">
-                 Bagus! Tidak ada produk dengan stok menipis.
+                Bagus! Tidak ada produk dengan stok menipis.
             </div>
         </div>
     </div>
@@ -100,7 +97,7 @@
     <!-- 5 PRODUK TERBARU -->
     <div class="card mt-4 shadow-sm">
         <div class="card-header bg-dark text-white">
-             5 Produk Terbaru
+            5 Produk Terbaru
         </div>
         <div class="card-body">
             <table class="table table-sm table-striped">
@@ -116,7 +113,7 @@
                 <tbody>
                 <tr th:each="product : ${latestProducts}">
                     <td th:text="${product.name}">-</td>
-                    <td th:text="${product.category.displayName}">-</td>
+                    <td th:text="${product.category != null ? product.category.name : 'Tidak Berkategori'}">-</td>
                     <td th:text="'Rp ' + ${product.price}">-</td>
                     <td th:text="${product.stock}">-</td>
                     <td>

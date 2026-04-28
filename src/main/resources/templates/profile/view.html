@@ -3,76 +3,97 @@
 <head th:replace="~{fragments/layout :: header}">
     <title>My Profile</title>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">My Profile</h4>
-                </div>
-                <div class="card-body">
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow">
 
-                    <!-- PESAN SUKSES -->
-                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <span th:text="${successMessage}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+        <!-- HEADER -->
+        <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+            <h4 class="text-lg font-semibold">My Profile</h4>
+        </div>
 
-                    <!-- PESAN ERROR -->
-                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <span th:text="${errorMessage}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+        <div class="p-6 space-y-6">
 
-                    <!-- DATA PROFILE -->
-                    <table class="table table-borderless">
-                        <tr>
-                            <th style="width: 150px;">Username</th>
-                            <td th:text="${user.username}">-</td>
-                        </tr>
-                        <tr>
-                            <th>Full Name</th>
-                            <td th:text="${user.fullName != null ? user.fullName : '-'}">-</td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td th:text="${user.email != null ? user.email : '-'}">-</td>
-                        </tr>
-                        <tr>
-                            <th>Phone Number</th>
-                            <td th:text="${user.phoneNumber != null ? user.phoneNumber : '-'}">-</td>
-                        </tr>
-                        <tr>
-                            <th>Address</th>
-                            <td th:text="${user.address != null ? user.address : '-'}">-</td>
-                        </tr>
-                        <tr>
-                            <th>Bio</th>
-                            <td th:text="${user.bio != null ? user.bio : '-'}">-</td>
-                        </tr>
-                    </table>
+            <!-- PESAN SUKSES -->
+            <div th:if="${successMessage}"
+                 class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded">
+                <span th:text="${successMessage}"></span>
+            </div>
 
-                    <!-- STATISTIK -->
-                    <hr class="my-4">
-                    <div class="alert alert-info">
-                        <strong>📊 Statistik Akun</strong><br>
-                        Total Produk: <strong th:text="${totalProducts != null ? totalProducts : 0}">0</strong><br>
-                        Produk Aktif: <strong th:text="${activeProducts != null ? activeProducts : 0}">0</strong><br>
-                        Total Nilai Inventory: <strong th:text="${totalStock != null ? totalStock : 0}">0</strong>
-                    </div>
+            <!-- PESAN ERROR -->
+            <div th:if="${errorMessage}"
+                 class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded">
+                <span th:text="${errorMessage}"></span>
+            </div>
 
-                    <!-- TOMBOL AKSI -->
-                    <div class="d-flex gap-2 mt-3">
-                        <a th:href="@{/user/profile/edit}" class="btn btn-warning">✏️ Edit Profile</a>
-                        <a th:href="@{/products}" class="btn btn-secondary">← Kembali ke Produk</a>
-                    </div>
+            <!-- DATA PROFILE -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <tbody class="divide-y">
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2 w-40">Username</th>
+                        <td class="py-2" th:text="${user.username}">-</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2">Full Name</th>
+                        <td class="py-2"
+                            th:text="${user.fullName != null ? user.fullName : '-'}">-</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2">Email</th>
+                        <td class="py-2"
+                            th:text="${user.email != null ? user.email : '-'}">-</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2">Phone Number</th>
+                        <td class="py-2"
+                            th:text="${user.phoneNumber != null ? user.phoneNumber : '-'}">-</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2">Address</th>
+                        <td class="py-2"
+                            th:text="${user.address != null ? user.address : '-'}">-</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left font-medium text-gray-600 py-2">Bio</th>
+                        <td class="py-2"
+                            th:text="${user.bio != null ? user.bio : '-'}">-</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
+            <!-- STATISTIK -->
+            <div class="border-t pt-4">
+                <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded">
+                    <p class="font-semibold mb-2">📊 Statistik Akun</p>
+                    <p>Total Produk:
+                        <strong th:text="${totalProducts != null ? totalProducts : 0}">0</strong>
+                    </p>
+                    <p>Produk Aktif:
+                        <strong th:text="${activeProducts != null ? activeProducts : 0}">0</strong>
+                    </p>
+                    <p>Total Nilai Inventory:
+                        <strong th:text="${totalStock != null ? totalStock : 0}">0</strong>
+                    </p>
                 </div>
             </div>
+
+            <!-- TOMBOL AKSI -->
+            <div class="flex flex-wrap gap-3 pt-2">
+                <a th:href="@{/user/profile/edit}"
+                   class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                    ✏️ Edit Profile
+                </a>
+                <a th:href="@{/products}"
+                   class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    ← Kembali ke Produk
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

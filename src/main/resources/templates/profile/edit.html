@@ -3,123 +3,144 @@
 <head th:replace="~{fragments/layout :: header}">
     <title>Edit Profile</title>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Edit Profile</h4>
-                </div>
-                <div class="card-body">
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow">
 
-                    <!-- PESAN SUKSES -->
-                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <span th:text="${successMessage}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+        <!-- HEADER -->
+        <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+            <h4 class="text-lg font-semibold">Edit Profile</h4>
+        </div>
 
-                    <!-- PESAN ERROR -->
-                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <span th:text="${errorMessage}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+        <div class="p-6 space-y-6">
 
-                    <!-- FORM EDIT PROFILE -->
-                    <form th:action="@{/user/profile/edit}" method="post">
-
-                        <!-- USERNAME (READ ONLY) -->
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control bg-light"
-                                   th:value="${user.username}" readonly>
-                            <small class="text-muted">Username tidak dapat diubah</small>
-                        </div>
-
-                        <!-- FULL NAME -->
-                        <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control"
-                                   name="fullName"
-                                   th:value="${user.fullName}"
-                                   placeholder="Masukkan nama lengkap">
-                        </div>
-
-                        <!-- EMAIL -->
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control"
-                                   name="email"
-                                   th:value="${user.email}"
-                                   placeholder="Masukkan email">
-                        </div>
-
-                        <!-- PHONE NUMBER -->
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control"
-                                   name="phoneNumber"
-                                   th:value="${user.phoneNumber}"
-                                   placeholder="Masukkan nomor telepon">
-                        </div>
-
-                        <!-- ADDRESS -->
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <input type="text" class="form-control"
-                                   name="address"
-                                   th:value="${user.address}"
-                                   placeholder="Masukkan alamat">
-                        </div>
-
-                        <!-- BIO -->
-                        <div class="mb-3">
-                            <label class="form-label">Bio</label>
-                            <textarea class="form-control"
-                                      name="bio"
-                                      rows="3"
-                                      placeholder="Ceritakan sedikit tentang diri Anda...">[[${user.bio}]]</textarea>
-                        </div>
-
-                        <!-- BUTTONS -->
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-                            <a th:href="@{/user/profile}" class="btn btn-secondary">Cancel</a>
-                        </div>
-
-                    </form>
-
-                    <!-- FORM GANTI PASSWORD -->
-                    <hr class="my-4">
-                    <h5 class="mb-3">🔐 Change Password</h5>
-
-                    <form th:action="@{/user/profile/change-password}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Current Password</label>
-                            <input type="password" class="form-control"
-                                   name="currentPassword" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" class="form-control"
-                                   name="newPassword" required>
-                            <small class="text-muted">Minimal 6 karakter</small>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control"
-                                   name="confirmPassword" required>
-                        </div>
-                        <button type="submit" class="btn btn-warning">
-                            🔄 Change Password
-                        </button>
-                    </form>
-
-                </div>
+            <!-- PESAN SUKSES -->
+            <div th:if="${successMessage}"
+                 class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded">
+                <span th:text="${successMessage}"></span>
             </div>
+
+            <!-- PESAN ERROR -->
+            <div th:if="${errorMessage}"
+                 class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- FORM EDIT PROFILE -->
+            <form th:action="@{/user/profile/edit}" method="post" class="space-y-4">
+
+                <!-- USERNAME -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text"
+                           class="mt-1 w-full rounded-md border-gray-300 bg-gray-100 shadow-sm"
+                           th:value="${user.username}" readonly>
+                    <p class="text-xs text-gray-500 mt-1">Username tidak dapat diubah</p>
+                </div>
+
+                <!-- FULL NAME -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text"
+                           name="fullName"
+                           th:value="${user.fullName}"
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                           placeholder="Masukkan nama lengkap">
+                </div>
+
+                <!-- EMAIL -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email"
+                           name="email"
+                           th:value="${user.email}"
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                           placeholder="Masukkan email">
+                </div>
+
+                <!-- PHONE NUMBER -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel"
+                           name="phoneNumber"
+                           th:value="${user.phoneNumber}"
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                           placeholder="Masukkan nomor telepon">
+                </div>
+
+                <!-- ADDRESS -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Address</label>
+                    <input type="text"
+                           name="address"
+                           th:value="${user.address}"
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                           placeholder="Masukkan alamat">
+                </div>
+
+                <!-- BIO -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Bio</label>
+                    <textarea name="bio"
+                              rows="3"
+                              class="mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                              placeholder="Ceritakan sedikit tentang diri Anda...">[[${user.bio}]]</textarea>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="flex gap-3 pt-2">
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        💾 Save Changes
+                    </button>
+                    <a th:href="@{/user/profile}"
+                       class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- CHANGE PASSWORD -->
+            <hr class="border-gray-200">
+
+            <h5 class="text-lg font-semibold">🔐 Change Password</h5>
+
+            <form th:action="@{/user/profile/change-password}" method="post" class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Current Password</label>
+                    <input type="password"
+                           name="currentPassword"
+                           required
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">New Password</label>
+                    <input type="password"
+                           name="newPassword"
+                           required
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                    <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                    <input type="password"
+                           name="confirmPassword"
+                           required
+                           class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+
+                <button type="submit"
+                        class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                    🔄 Change Password
+                </button>
+            </form>
+
         </div>
     </div>
 </div>

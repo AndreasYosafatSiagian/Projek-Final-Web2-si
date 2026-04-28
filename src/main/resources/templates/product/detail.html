@@ -8,38 +8,46 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h2 th:text="${product.name}" class="mb-4">Nama Produk</h2>
 
-            <div class="card">
+            <h2 class="mb-4" th:text="${product.name}">Nama Produk</h2>
+
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
+
                         <tr>
                             <th class="text-muted" style="width: 200px;">Nama</th>
                             <td th:text="${product.name}">-</td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Kategori</th>
-                            <!-- ✅ UPDATE: menampilkan nama kategori dari entity Category -->
                             <td>
                                 <span th:if="${product.category != null}"
                                       th:text="${product.category.name}"
                                       class="badge bg-info">
                                     Nama Kategori
                                 </span>
+
                                 <span th:unless="${product.category != null}"
                                       class="badge bg-secondary">
                                     Tidak Berkategori
                                 </span>
                             </td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Harga</th>
-                            <td th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'COMMA')}">Rp 0</td>
+                            <td th:text="${product.price != null ? 'Rp ' + #numbers.formatDecimal(product.price,1,'COMMA',0,'POINT') : '-'}">
+                                Rp 0
+                            </td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Stok</th>
-                            <td th:text="${product.stock}">0</td>
+                            <td th:text="${product.stock != null ? product.stock : 0}">0</td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Status</th>
                             <td>
@@ -47,22 +55,33 @@
                                 <span th:unless="${product.active}" class="badge bg-danger">Tidak Aktif</span>
                             </td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Tanggal Dibuat</th>
-                            <td th:text="${product.createdAt}">-</td>
+                            <td th:text="${product.createdAt != null ? product.createdAt : '-'}">-</td>
                         </tr>
+
                         <tr>
                             <th class="text-muted">Deskripsi</th>
-                            <td th:text="${product.description != null ? product.description : '-'}">-</td>
+                            <td th:text="${product.description != null and !#strings.isEmpty(product.description) ? product.description : '-'}">
+                                -
+                            </td>
                         </tr>
+
                     </table>
                 </div>
             </div>
 
             <div class="d-flex gap-2 mt-4">
-                <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning">Edit</a>
-                <a th:href="@{/products}" class="btn btn-secondary">Kembali ke Daftar</a>
+                <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning">
+                    Edit
+                </a>
+
+                <a th:href="@{/products}" class="btn btn-secondary">
+                    Kembali ke Daftar
+                </a>
             </div>
+
         </div>
     </div>
 </div>

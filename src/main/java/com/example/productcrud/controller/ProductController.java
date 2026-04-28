@@ -41,7 +41,7 @@ public class ProductController {
     }
 
     // ======================
-    // LIST PRODUCT WITH PAGINATION, SEARCH & FILTER (NAME, ACTIVE, CATEGORY)
+    // LIST PRODUCT (FINAL FIX)
     // ======================
     @GetMapping("/products")
     public String listProducts(@AuthenticationPrincipal UserDetails userDetails,
@@ -53,39 +53,47 @@ public class ProductController {
 
         User currentUser = getCurrentUser(userDetails);
 
-        // Ukuran halaman: 10 produk per halaman
         int pageSize = 10;
 
-        // Ambil data dengan pagination (termasuk filter category)
-        Page<Product> productPage = productService.findPaginated(currentUser, page, pageSize, search, active, categoryId);
+        // 🔥 convert ke 0-based (WAJIB)
+        int currentPage = (page < 1) ? 0 : page - 1;
 
-        // Hitung nomor halaman awal dan akhir untuk navigasi
-        int currentPage = productPage.getNumber() + 1;
+        Page<Product> productPage = productService.findPaginated(
+                currentUser,
+                currentPage,
+                pageSize,
+                search,
+                active,
+                categoryId
+        );
+
         int totalPages = productPage.getTotalPages();
-        int startPage = Math.max(1, currentPage - 2);
-        int endPage = Math.min(totalPages, currentPage + 2);
 
-        // Ambil semua categories untuk dropdown filter
+        // range pagination
+        int startPage = Math.max(1, page - 2);
+        int endPage = Math.min(totalPages, page + 2);
+
         List<Category> categories = categoryService.getAllByUser(currentUser.getId());
 
-        // Kirim data ke view
         model.addAttribute("products", productPage.getContent());
-        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", productPage.getTotalElements());
-        model.addAttribute("pageSize", pageSize);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+
+        // 🔥 penting (biar filter tidak hilang)
         model.addAttribute("search", search);
         model.addAttribute("activeFilter", active);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("categories", categories); // Untuk dropdown filter kategori
+
+        model.addAttribute("categories", categories);
 
         return "product/list";
     }
 
     // ======================
-    // DETAIL PRODUCT
+    // DETAIL
     // ======================
     @GetMapping("/products/{id}")
     public String detailProduct(@PathVariable Long id,
@@ -107,7 +115,7 @@ public class ProductController {
     }
 
     // ======================
-    // CREATE FORM
+    // CREATE
     // ======================
     @GetMapping("/products/new")
     public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails,
@@ -119,13 +127,14 @@ public class ProductController {
         product.setCreatedAt(LocalDate.now());
 
         model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.getAllByUser(currentUser.getId()));
+        model.addAttribute("categories",
+                categoryService.getAllByUser(currentUser.getId()));
 
         return "product/form";
     }
 
     // ======================
-    // SAVE PRODUCT
+    // SAVE
     // ======================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
@@ -135,18 +144,20 @@ public class ProductController {
 
         User currentUser = getCurrentUser(userDetails);
 
-        // validasi ownership saat edit
         if (product.getId() != null) {
-            boolean exists = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();
+            boolean exists = productService
+                    .findByIdAndOwner(product.getId(), currentUser)
+                    .isPresent();
+
             if (!exists) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan");
                 return "redirect:/products";
             }
         }
 
-        // Set category dari DB berdasarkan categoryId yang dipilih user
         if (categoryId != null) {
-            Category category = categoryService.getByIdAndUser(categoryId, currentUser.getId())
+            Category category = categoryService
+                    .getByIdAndUser(categoryId, currentUser.getId())
                     .orElse(null);
             product.setCategory(category);
         } else {
@@ -161,7 +172,7 @@ public class ProductController {
     }
 
     // ======================
-    // EDIT FORM
+    // EDIT
     // ======================
     @GetMapping("/products/{id}/edit")
     public String showEditForm(@PathVariable Long id,
@@ -174,7 +185,8 @@ public class ProductController {
         return productService.findByIdAndOwner(id, currentUser)
                 .map(product -> {
                     model.addAttribute("product", product);
-                    model.addAttribute("categories", categoryService.getAllByUser(currentUser.getId()));
+                    model.addAttribute("categories",
+                            categoryService.getAllByUser(currentUser.getId()));
                     return "product/form";
                 })
                 .orElseGet(() -> {
@@ -184,7 +196,7 @@ public class ProductController {
     }
 
     // ======================
-    // DELETE PRODUCT
+    // DELETE
     // ======================
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id,
@@ -193,7 +205,9 @@ public class ProductController {
 
         User currentUser = getCurrentUser(userDetails);
 
-        boolean exists = productService.findByIdAndOwner(id, currentUser).isPresent();
+        boolean exists = productService
+                .findByIdAndOwner(id, currentUser)
+                .isPresent();
 
         if (exists) {
             productService.deleteByIdAndOwner(id, currentUser);

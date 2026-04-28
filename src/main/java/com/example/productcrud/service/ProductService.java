@@ -1,13 +1,9 @@
 package com.example.productcrud.service;
 
-import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -47,7 +43,7 @@ public class ProductService {
     }
 
     // ======================
-    // DASHBOARD BASIC
+    // DASHBOARD
     // ======================
 
     public long countByOwner(User owner) {
@@ -61,10 +57,6 @@ public class ProductService {
                 .limit(5)
                 .collect(Collectors.toList());
     }
-
-    // ======================
-    // DASHBOARD ADVANCED
-    // ======================
 
     public long totalInventoryValue(User owner) {
         Long total = productRepository.sumTotalValueByOwner(owner);
@@ -100,101 +92,58 @@ public class ProductService {
     }
 
     // ======================
-    // PAGINATION WITH SEARCH, ACTIVE & CATEGORY FILTERS
+    // PAGINATION (FINAL FIX)
     // ======================
 
-    /**
-     * Get paginated products with search, active status, and category filters
-     * @param owner Current logged in user
-     * @param page Page number (starting from 1)
-     * @param size Items per page (default 10)
-     * @param search Search keyword for product name (partial match, case-insensitive)
-     * @param active Filter by active status (null = all, true = active, false = inactive)
-     * @param categoryId Filter by category ID (null = all categories)
-     * @return Page of products
-     */
     public Page<Product> findPaginated(User owner, int page, int size,
                                        String search, Boolean active, Long categoryId) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        // Case 1: All filters (search + active + category)
-        if (search != null && !search.isEmpty() && active != null && categoryId != null) {
+        // 🔥 FIX: JANGAN pakai (page - 1)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+
+        // 1. ALL FILTER
+        if (hasSearch && active != null && categoryId != null) {
             return productRepository.findByOwnerAndNameContainingIgnoreCaseAndActiveAndCategoryId(
                     owner, search, active, categoryId, pageable);
         }
-        // Case 2: Search + active (no category)
-        else if (search != null && !search.isEmpty() && active != null) {
+
+        // 2. SEARCH + ACTIVE
+        if (hasSearch && active != null) {
             return productRepository.findByOwnerAndNameContainingIgnoreCaseAndActive(
                     owner, search, active, pageable);
         }
-        // Case 3: Search + category (no active)
-        else if (search != null && !search.isEmpty() && categoryId != null) {
+
+        // 3. SEARCH + CATEGORY
+        if (hasSearch && categoryId != null) {
             return productRepository.findByOwnerAndNameContainingIgnoreCaseAndCategoryId(
                     owner, search, categoryId, pageable);
         }
-        // Case 4: Active + category (no search)
-        else if (active != null && categoryId != null) {
+
+        // 4. ACTIVE + CATEGORY
+        if (active != null && categoryId != null) {
             return productRepository.findByOwnerAndActiveAndCategoryId(
                     owner, active, categoryId, pageable);
         }
-        // Case 5: Search only
-        else if (search != null && !search.isEmpty()) {
-            return productRepository.findByOwnerAndNameContainingIgnoreCase(owner, search, pageable);
+
+        // 5. SEARCH ONLY
+        if (hasSearch) {
+            return productRepository.findByOwnerAndNameContainingIgnoreCase(
+                    owner, search, pageable);
         }
-        // Case 6: Active only
-        else if (active != null) {
+
+        // 6. ACTIVE ONLY
+        if (active != null) {
             return productRepository.findByOwnerAndActive(owner, active, pageable);
         }
-        // Case 7: Category only
-        else if (categoryId != null) {
+
+        // 7. CATEGORY ONLY
+        if (categoryId != null) {
             return productRepository.findByOwnerAndCategoryId(owner, categoryId, pageable);
         }
-        // Case 8: No filters
-        else {
-            return productRepository.findByOwner(owner, pageable);
-        }
-    }
 
-    /**
-     * Get total number of pages based on filters
-     */
-    public int getTotalPages(User owner, int size, String search, Boolean active, Long categoryId) {
-        long totalItems;
-
-        // Case 1: All filters
-        if (search != null && !search.isEmpty() && active != null && categoryId != null) {
-            totalItems = productRepository.countByOwnerAndNameContainingIgnoreCaseAndActiveAndCategoryId(
-                    owner, search, active, categoryId);
-        }
-        // Case 2: Search + active
-        else if (search != null && !search.isEmpty() && active != null) {
-            totalItems = productRepository.countByOwnerAndNameContainingIgnoreCaseAndActive(owner, search, active);
-        }
-        // Case 3: Search + category
-        else if (search != null && !search.isEmpty() && categoryId != null) {
-            totalItems = productRepository.countByOwnerAndNameContainingIgnoreCaseAndCategoryId(owner, search, categoryId);
-        }
-        // Case 4: Active + category
-        else if (active != null && categoryId != null) {
-            totalItems = productRepository.countByOwnerAndActiveAndCategoryId(owner, active, categoryId);
-        }
-        // Case 5: Search only
-        else if (search != null && !search.isEmpty()) {
-            totalItems = productRepository.countByOwnerAndNameContainingIgnoreCase(owner, search);
-        }
-        // Case 6: Active only
-        else if (active != null) {
-            totalItems = productRepository.countByOwnerAndActive(owner, active);
-        }
-        // Case 7: Category only
-        else if (categoryId != null) {
-            totalItems = productRepository.countByOwnerAndCategoryId(owner, categoryId);
-        }
-        // Case 8: No filters
-        else {
-            totalItems = productRepository.countByOwner(owner);
-        }
-
-        return (int) Math.ceil((double) totalItems / size);
+        // 8. NO FILTER
+        return productRepository.findByOwner(owner, pageable);
     }
 }
